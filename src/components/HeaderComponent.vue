@@ -5,14 +5,46 @@
       <div class="header__banner__gradient"></div>
     </div>
 
-    <img src="@/assets/tekila-logo.svg" class="header__logo" />
+    <img
+      src="@/assets/tekila-logo.svg"
+      class="header__logo"
+      alt="logo tekila"
+    />
 
     <div class="header__bloc">
-      <h1>FAITES LA<br />DIFFERENCE</h1>
-      <h2>
+      <div class="header__bloc__title">
+        <div class="header__bloc__title__wrapper">
+          <div class="header__bloc__title__word">
+            <span class="header__bloc__title__word__letter">F</span
+            ><span class="header__bloc__title__word__letter">A</span
+            ><span class="header__bloc__title__word__letter">I</span
+            ><span class="header__bloc__title__word__letter">T</span
+            ><span class="header__bloc__title__word__letter">E</span
+            ><span class="header__bloc__title__word__letter">S</span>
+          </div>
+
+          <div class="header__bloc__title__word">
+            <span class="header__bloc__title__word__letter">L</span
+            ><span class="header__bloc__title__word__letter">A</span>
+          </div>
+        </div>
+        <div class="header__bloc__title__word">
+          <span class="header__bloc__title__word__letter">D</span
+          ><span class="header__bloc__title__word__letter">I</span
+          ><span class="header__bloc__title__word__letter">F</span
+          ><span class="header__bloc__title__word__letter">F</span
+          ><span class="header__bloc__title__word__letter">é</span
+          ><span class="header__bloc__title__word__letter">R</span
+          ><span class="header__bloc__title__word__letter">E</span
+          ><span class="header__bloc__title__word__letter">N</span
+          ><span class="header__bloc__title__word__letter">C</span
+          ><span class="header__bloc__title__word__letter">E</span>
+        </div>
+      </div>
+      <h1>
         Votre site web ressemble à tous les autres ? <br />Créons votre site web
         3.0 sur-mesure
-      </h2>
+      </h1>
       <div class="header__bloc__buttons">
         <button class="button-primary">Voir une démo</button
         ><button class="button-secondary">Devis gratuit</button>
@@ -63,13 +95,6 @@
     height: 40px;
   }
   & h1 {
-    font-size: 96px;
-    font-weight: $slim-weight;
-    z-index: 10;
-    font-family: "GoodTimes";
-    text-shadow: $text-color 0px 0px 8px;
-  }
-  & h2 {
     font-size: 24px;
     font-weight: $slim-weight;
   }
@@ -78,6 +103,36 @@
     display: flex;
     flex-direction: column;
     gap: $small-gap;
+
+    &__title {
+      font-size: 96px;
+      font-weight: $slim-weight;
+      z-index: 10;
+      font-family: "GoodTimes";
+      text-shadow: $text-color 0px 0px 8px;
+
+      &__wrapper {
+        display: flex;
+        gap: 32px;
+      }
+      &__word {
+        display: flex;
+        &__letter {
+          animation: jump 2s ease-in infinite;
+          @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+              animation-delay: 60ms * $i;
+            }
+          }
+
+          @keyframes jump {
+            10% {
+              transform: translateY(10px);
+            }
+          }
+        }
+      }
+    }
 
     &__buttons {
       display: flex;

@@ -27,7 +27,7 @@ export default {
   padding: 32px $mobile-padding;
 
   @media (min-width: $tablet-screen) {
-    padding: 64px $desktop-padding;
+    padding: 64px 128px;
   }
 }
 </style>
