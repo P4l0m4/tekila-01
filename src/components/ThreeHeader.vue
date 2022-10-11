@@ -100,30 +100,30 @@ export default {
       /**
        * Overlay
        */
-      const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
-      const overlayMaterial = new THREE.ShaderMaterial({
-        // wireframe: true,
-        transparent: true,
-        uniforms: {
-          uAlpha: { value: 1 },
-        },
-        vertexShader: `
-        void main()
-        {
-            gl_Position = vec4(position, 1.0);
-        }
-    `,
-        fragmentShader: `
-        uniform float uAlpha;
+      //   const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
+      //   const overlayMaterial = new THREE.ShaderMaterial({
+      //     wireframe: true,
+      //     transparent: true,
+      //     uniforms: {
+      //       uAlpha: { value: 1 },
+      //     },
+      //     vertexShader: `
+      //     void main()
+      //     {
+      //         gl_Position = vec4(position, 1.0);
+      //     }
+      // `,
+      //     fragmentShader: `
+      //     uniform float uAlpha;
 
-        void main()
-        {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
-        }
-    `,
-      });
-      const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
-      scene.add(overlay);
+      //     void main()
+      //     {
+      //         gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+      //     }
+      // `,
+      //   });
+      //   const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
+      //   scene.add(overlay);
 
       /**
        * Update all materials
@@ -171,8 +171,10 @@ export default {
       //     }
       //   });
       gltfLoader.load("threejs-models/DamagedHelmet.gltf", (gltf) => {
+        // gltf.scene.scale.set(2.5, 2.5, 2.5);
         gltf.scene.scale.set(2.5, 2.5, 2.5);
-        gltf.scene.rotation.y = Math.PI * 0.5;
+        // gltf.scene.rotation.y = Math.PI * 0.5;
+        gltf.scene.rotation.x = -0.4;
         scene.add(gltf.scene);
 
         updateAllMaterials();
@@ -200,10 +202,10 @@ export default {
       /**
        * Lights
        */
-      const ambientLight = new THREE.AmbientLight("white", 5);
+      const ambientLight = new THREE.AmbientLight("purple", 0.8);
       scene.add(ambientLight);
 
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+      const directionalLight = new THREE.DirectionalLight("blue", 2);
       directionalLight.castShadow = true;
       directionalLight.shadow.mapSize.set(1024, 1024);
       directionalLight.shadow.camera.far = 15;
@@ -214,7 +216,7 @@ export default {
       directionalLight.position.set(5, 5, 5);
       scene.add(directionalLight);
 
-      const pointLight = new THREE.PointLight("orange", 2);
+      const pointLight = new THREE.PointLight("orange", 4);
       pointLight.position.x = 2;
       pointLight.position.y = 3;
       pointLight.position.z = 4;
@@ -268,7 +270,7 @@ export default {
        */
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
-        // alpha: true,
+        alpha: true,
         antialias: true,
       });
       //   renderer.setSize(sizes.width, sizes.height);
@@ -286,15 +288,18 @@ export default {
       /**
        * Animate
        */
-      //   const clock = new THREE.Clock();
+      const clock = new THREE.Clock();
 
       const tick = () => {
-        // const elapsedTime = clock.getElapsedTime();
-        // console.log(elapsedTime);
+        const elapsedTime = clock.getElapsedTime();
+
         // Update controls
         controls.update();
 
         if (sceneReady) {
+          const circle = scene.getObjectByName("Scene");
+          circle.rotation.y = 0.08 * elapsedTime;
+          console.log(circle);
           // GO THROUGH EACH POINT OF POINTS ARRAY
           for (const point of points) {
             const screenPosition = point.position.clone();
@@ -317,6 +322,8 @@ export default {
               }
             }
 
+            // const translateX = screenPosition.x * sizes.width * 0.5;
+            // const translateY = -screenPosition.y * sizes.height * 0.5;
             const translateX = screenPosition.x * sizes.width * 0.5;
             const translateY = -screenPosition.y * sizes.height * 0.5;
             point.element.style.transform =
@@ -343,14 +350,16 @@ export default {
 
 <style lang="scss" scoped>
 .webgl {
-  width: 400px !important;
-  height: 400px;
+  width: clamp(200px, 100%, 600px) !important;
+  height: 100vh !important;
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
   margin: auto;
   z-index: 2;
+  outline: none;
+  background: none;
 }
 .loading-bar {
   position: absolute;
@@ -389,6 +398,7 @@ export default {
   width: 40px;
   height: 40px;
   background-color: rgba(0, 0, 0, 0.6);
+  text-align: center;
   border-radius: 50%;
   line-height: 40px;
   cursor: pointer;

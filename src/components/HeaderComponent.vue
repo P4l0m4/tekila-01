@@ -82,7 +82,7 @@ export default {
       width: 100%;
       height: 100%;
       background-size: cover;
-      filter: blur(10px);
+      filter: blur(6px);
       background-image: url("@/assets/header.jpg");
     }
     &__gradient {
