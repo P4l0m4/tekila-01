@@ -10,7 +10,7 @@
       class="header__logo"
       alt="logo tekila"
     />
-
+    <ThreeHeader />
     <div class="header__bloc">
       <div class="header__bloc__title">
         <div class="header__bloc__title__wrapper">
@@ -52,9 +52,18 @@
     </div>
   </header>
 </template>
+<script>
+import ThreeHeader from "@/components/ThreeHeader.vue";
+export default {
+  components: {
+    ThreeHeader,
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .header {
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
