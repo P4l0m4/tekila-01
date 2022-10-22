@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="container">
     <canvas class="webgl"></canvas>
     <div class="loading-bar"></div>
-
+    <div class="loading-bar__background"></div>
     <div class="point point-0">
       <div class="label">1</div>
       <div class="text">
@@ -30,7 +30,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-// import { gsap } from "gsap";
+import { gsap } from "gsap";
 import { Raycaster } from "three";
 export default {
   name: "ThreeHeader",
@@ -54,21 +54,26 @@ export default {
        */
       let sceneReady = false;
       const loadingBarElement = document.querySelector(".loading-bar");
+      const loadingBarElement2 = document.querySelector(
+        ".loading-bar__background"
+      );
       const loadingManager = new THREE.LoadingManager(
         // Loaded
         () => {
           // Wait a little
           window.setTimeout(() => {
             // Animate overlay
-            // gsap.to(overlayMaterial.uniforms.uAlpha, {
-            //   duration: 3,
-            //   value: 0,
-            //   delay: 1,
-            // });
+            gsap.to(overlayMaterial.uniforms.uAlpha, {
+              duration: 3,
+              value: 0,
+              delay: 1,
+            });
 
             // Update loadingBarElement
             loadingBarElement.classList.add("ended");
             loadingBarElement.style.transform = "";
+            loadingBarElement2.classList.add("ended");
+            loadingBarElement2.style.transform = "";
           }, 500);
 
           window.setTimeout(() => {
@@ -100,30 +105,30 @@ export default {
       /**
        * Overlay
        */
-      //   const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
-      //   const overlayMaterial = new THREE.ShaderMaterial({
-      //     wireframe: true,
-      //     transparent: true,
-      //     uniforms: {
-      //       uAlpha: { value: 1 },
-      //     },
-      //     vertexShader: `
-      //     void main()
-      //     {
-      //         gl_Position = vec4(position, 1.0);
-      //     }
-      // `,
-      //     fragmentShader: `
-      //     uniform float uAlpha;
+      const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
+      const overlayMaterial = new THREE.ShaderMaterial({
+        wireframe: true,
+        transparent: true,
+        uniforms: {
+          uAlpha: { value: 1 },
+        },
+        vertexShader: `
+          void main()
+          {
+              gl_Position = vec4(position, 1.0);
+          }
+      `,
+        fragmentShader: `
+          uniform float uAlpha;
 
-      //     void main()
-      //     {
-      //         gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
-      //     }
-      // `,
-      //   });
-      //   const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
-      //   scene.add(overlay);
+          void main()
+          {
+              gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+          }
+      `,
+      });
+      const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
+      scene.add(overlay);
 
       /**
        * Update all materials
@@ -161,24 +166,32 @@ export default {
       //   scene.environment = environmentMap;
 
       //   debugObject.envMapIntensity = 2.5;
-
+      //MATERIAL
+      const newMaterial = new THREE.MeshBasicMaterial({
+        color: "white",
+        wireframe: true,
+      });
       //MODELS
 
-      //   gltfLoader.load("threejs-models/cactus.gltf", (gltf) => {
-      //     while (gltf.scene.children.length) {
-      //       //   gltf.scene.children[0].material = newMaterial;
-      //       scene.add(gltf.scene.children[0]);
-      //     }
-      //   });
-      gltfLoader.load("threejs-models/DamagedHelmet.gltf", (gltf) => {
-        // gltf.scene.scale.set(2.5, 2.5, 2.5);
-        gltf.scene.scale.set(2.5, 2.5, 2.5);
-        // gltf.scene.rotation.y = Math.PI * 0.5;
-        gltf.scene.rotation.x = -0.4;
-        scene.add(gltf.scene);
+      gltfLoader.load("threejs-models/cactus.gltf", (gltf) => {
+        gltf.scene.scale.set(0.3, 0.3, 0.3);
+        gltf.scene.children[0].material = newMaterial;
+        gltf.scene.children[0].position.y = 4;
 
+        scene.add(gltf.scene);
         updateAllMaterials();
+        const cactus = scene.getObjectByName("Cube");
+        cactus.position.y = -12;
       });
+
+      // gltfLoader.load("threejs-models/DIORAMA1/diorama1.gltf", (gltf) => {
+      //   // gltf.scene.scale.set(2.5, 2.5, 2.5);
+      //   gltf.scene.scale.set(0.3, 0.3, 0.3);
+      //   gltf.scene.rotation.y = Math.PI * 0.25;
+      //   scene.add(gltf.scene);
+
+      //   updateAllMaterials();
+      // });
 
       //RAYCASTER
       const raycaster = new Raycaster();
@@ -200,42 +213,19 @@ export default {
       ];
 
       /**
-       * Lights
-       */
-      const ambientLight = new THREE.AmbientLight("purple", 0.8);
-      scene.add(ambientLight);
-
-      const directionalLight = new THREE.DirectionalLight("blue", 2);
-      directionalLight.castShadow = true;
-      directionalLight.shadow.mapSize.set(1024, 1024);
-      directionalLight.shadow.camera.far = 15;
-      directionalLight.shadow.camera.left = -7;
-      directionalLight.shadow.camera.top = 7;
-      directionalLight.shadow.camera.right = 7;
-      directionalLight.shadow.camera.bottom = -7;
-      directionalLight.position.set(5, 5, 5);
-      scene.add(directionalLight);
-
-      const pointLight = new THREE.PointLight("orange", 4);
-      pointLight.position.x = 2;
-      pointLight.position.y = 3;
-      pointLight.position.z = 4;
-      scene.add(pointLight);
-
-      /**
        * Sizes
        */
       const sizes = {
-        // width: window.innerWidth * 0.8,
-        // height: window.innerHeight,
-        width: 400,
-        height: 400,
+        width: window.innerWidth * 0.5,
+        height: window.innerHeight,
+        // width: 400,
+        // height: 400,
       };
 
       window.addEventListener("resize", () => {
         // Update sizes
-        // sizes.width = window.innerWidth * 0.8;
-        // sizes.height = window.innerHeight;
+        sizes.width = window.innerWidth * 0.5;
+        sizes.height = window.innerHeight;
 
         // Update camera
         camera.aspect = sizes.width / sizes.height;
@@ -273,8 +263,8 @@ export default {
         alpha: true,
         antialias: true,
       });
-      //   renderer.setSize(sizes.width, sizes.height);
-      //   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       renderer.physicallyCorrectLights = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
@@ -292,14 +282,15 @@ export default {
 
       const tick = () => {
         const elapsedTime = clock.getElapsedTime();
+        console.log(elapsedTime);
 
         // Update controls
-        controls.update();
+        // controls.update();
 
         if (sceneReady) {
-          const circle = scene.getObjectByName("Scene");
-          circle.rotation.y = 0.08 * elapsedTime;
-          console.log(circle);
+          const cactus = scene.getObjectByName("Cube");
+          cactus.rotation.y = 0.5 * elapsedTime;
+
           // GO THROUGH EACH POINT OF POINTS ARRAY
           for (const point of points) {
             const screenPosition = point.position.clone();
@@ -349,20 +340,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container {
+  position: relative;
+}
 .webgl {
   width: clamp(200px, 100%, 600px) !important;
-  height: 100vh !important;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  z-index: 2;
+  z-index: -1;
   outline: none;
   background: none;
 }
 .loading-bar {
-  position: absolute;
+  position: fixed;
   top: 50%;
   width: 100%;
   height: 2px;
@@ -370,12 +358,28 @@ export default {
   transform: scaleX(0.3);
   transform-origin: top left;
   transition: transform 0.5s;
-}
+  z-index: 3;
+  &.ended {
+    transform: scaleX(0);
+    transform-origin: 100% 0;
+    transition: transform 1.5s ease-in-out;
+  }
 
-.loading-bar.ended {
-  transform: scaleX(0);
-  transform-origin: 100% 0;
-  transition: transform 1.5s ease-in-out;
+  &__background {
+    background-color: $base-color;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    inset: 0 0 0 0;
+    z-index: 2;
+
+    &.ended {
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: 100% 0;
+      transition: transform, opacity 1.5s ease-in-out;
+    }
+  }
 }
 
 .point {

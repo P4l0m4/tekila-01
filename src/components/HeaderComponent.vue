@@ -1,16 +1,11 @@
 <template>
   <header class="header">
-    <div class="header__banner">
-      <div class="header__banner__img"></div>
-      <div class="header__banner__gradient"></div>
-    </div>
-
     <img
       src="@/assets/tekila-logo.svg"
       class="header__logo"
       alt="logo tekila"
     />
-    <ThreeHeader />
+    <ThreeHeader class="threejs-object" />
     <div class="header__bloc">
       <div class="header__bloc__title">
         <div class="header__bloc__title__wrapper">
@@ -46,17 +41,25 @@
         3.0 sur-mesure
       </h1>
       <div class="header__bloc__buttons">
-        <button class="button-primary">Voir une démo</button
-        ><button class="button-secondary">Devis gratuit</button>
+        <a class="button-primary button" href="#">
+          Voir une démo
+          <SparklesEffect class="sparkles-effect" />
+        </a>
+        <a class="button-secondary button" href="#">
+          Devis gratuit
+          <SparklesEffect class="sparkles-effect" />
+        </a>
       </div>
     </div>
   </header>
 </template>
 <script>
 import ThreeHeader from "@/components/ThreeHeader.vue";
+import SparklesEffect from "@/components/SparklesEffect.vue";
 export default {
   components: {
     ThreeHeader,
+    SparklesEffect,
   },
 };
 </script>
@@ -71,33 +74,10 @@ export default {
   align-items: flex-start;
   gap: $medium-gap;
   color: $text-color;
-  &__banner {
-    position: absolute;
-    height: 200vh;
-    width: 100vw;
-    top: 0;
-    right: 0;
-    z-index: -1;
-    &__img {
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      filter: blur(6px);
-      background-image: url("@/assets/header.jpg");
-    }
-    &__gradient {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      right: 0;
-      z-index: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(49, 35, 153, 0) 0%,
-        $base-color 100%
-      );
-    }
+  padding: 32px $mobile-padding;
+
+  @media (min-width: $tablet-screen) {
+    padding: 64px 128px;
   }
 
   &__logo {
@@ -107,16 +87,22 @@ export default {
     font-size: 24px;
     font-weight: $slim-weight;
   }
-
+  .threejs-object {
+    width: 500px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
   &__bloc {
     display: flex;
     flex-direction: column;
     gap: $small-gap;
+    z-index: 1;
 
     &__title {
       font-size: 96px;
       font-weight: $slim-weight;
-      z-index: 10;
       font-family: "GoodTimes";
       text-shadow: $text-color 0px 0px 8px;
 
@@ -146,6 +132,16 @@ export default {
     &__buttons {
       display: flex;
       gap: 32px;
+      position: relative;
+
+      .button:hover > .sparkles-effect {
+        opacity: 1;
+        display: block;
+      }
+
+      .sparkles-effect {
+        display: none;
+      }
     }
   }
 }
